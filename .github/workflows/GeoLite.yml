@@ -24,17 +24,11 @@ jobs:
     steps:
     - name: Download GeoLite.mmdb
       run: |
-        wget -nv -O- "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-ASN&license_key=${{ secrets.LICENSE_KEY }}&suffix=tar.gz" | tar zxv
-        wget -nv -O- "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City&license_key=${{ secrets.LICENSE_KEY }}&suffix=tar.gz" | tar zxv
-        wget -nv -O- "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-Country&license_key=${{ secrets.LICENSE_KEY }}&suffix=tar.gz" | tar zxv
-        wget -nv -O- "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City-CSV&license_key=${{ secrets.LICENSE_KEY }}&suffix=zip" | unzip
-        curl "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City-CSV&license_key=${{ secrets.LICENSE_KEY }}&suffix=zip" --output geoip_cvs.zip
-        unzip geoip_cvs.zip
+        curl "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City-CSV&license_key=${{ secrets.LICENSE_KEY }}&suffix=zip" --output geoip_city_cvs.zip
+        curl "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City&license_key=${{ secrets.LICENSE_KEY }}&suffix=zip" --output geoip_city_db.tar.gz
         mkdir -p upload
-        cp -v GeoLite2-ASN*/*.mmdb upload
-        cp -v GeoLite2-City_*/*.mmdb upload
-        cp -v GeoLite2-Country*/*.mmdb upload
-        cp -v GeoLite2-City-CSV_*/GeoLite2-City-Blocks-IPv4.csv upload
+        cp -v geoip_city_cvs.zip upload
+        cp -v geoip_city_db.tar.gz upload
         echo "TAG_NAME=$(date +"%Y.%m.%d")" >> $GITHUB_ENV
 
     - name: Push to "download" branch
@@ -57,8 +51,7 @@ jobs:
         tag_name: ${{ env.TAG_NAME }}
         body: ${{ env.TAG_NAME }}
         files: |
-          *.mmdb
-          *.csv
+          *.zip
 
     - name: Remove old Releases
       uses: dev-drprasad/delete-older-releases@v0.2.0
