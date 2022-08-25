@@ -25,7 +25,7 @@ jobs:
     - name: Download GeoLite.mmdb
       run: |
         curl "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City-CSV&license_key=${{ secrets.LICENSE_KEY }}&suffix=zip" --output geoip_city_cvs.zip
-        curl "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City&license_key=${{ secrets.LICENSE_KEY }}&suffix=zip" --output geoip_city_db.tar.gz
+        curl "https://download.maxmind.com/app/geoip_download?edition_id=GeoLite2-City&license_key=${{ secrets.LICENSE_KEY }}&suffix=tar.gz" --output geoip_city_db.tar.gz
         mkdir -p upload
         cp -v geoip_city_cvs.zip upload
         cp -v geoip_city_db.tar.gz upload
@@ -52,6 +52,7 @@ jobs:
         body: ${{ env.TAG_NAME }}
         files: |
           *.zip
+          *.tar.gz
 
     - name: Remove old Releases
       uses: dev-drprasad/delete-older-releases@v0.2.0
